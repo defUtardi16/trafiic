@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisis Simulasi Traffic Grid</title>
+    <title>Presentasi Analisis Traffic Grid</title>
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -11,12 +11,13 @@
             padding: 0; 
             display: flex; 
             height: 100vh; 
-            background-color: #f4f7f6;
+            background-color: #1e272e;
+            color: #d2dae2;
         }
         /* Bagian Kiri untuk iframe simulasi */
         #simulation-container { 
             flex: 6; 
-            border-right: 3px solid #ddd; 
+            border-right: 4px solid #3c40c6; 
             background: #fff;
         }
         iframe { 
@@ -24,47 +25,63 @@
             height: 100%; 
             border: none; 
         }
-        /* Bagian Kanan untuk Panel Analisis */
-        #analysis-panel { 
+        /* Bagian Kanan untuk Panel Presentasi */
+        #presentation-panel { 
             flex: 4; 
             padding: 25px; 
             overflow-y: auto; 
+            background: #2d3436;
         }
         .header {
-            background: #2c3e50;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
             text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #636e72;
+            padding-bottom: 15px;
         }
-        h1 { margin: 0; font-size: 1.5em; }
-        h2 { margin-top: 0; font-size: 1.2em; color: #2c3e50; }
-        .card { 
-            background: white; 
-            padding: 20px; 
-            margin-bottom: 15px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            border-left: 5px solid #3498db;
-        }
-        .card.warning { border-left-color: #e74c3c; }
-        .card.success { border-left-color: #2ecc71; }
+        h1 { margin: 0; font-size: 1.6em; color: #0fb9b1; }
         
+        /* Kotak Teks Presenter */
+        #presenter-box {
+            background: #f1f2f6;
+            color: #2f3640;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            min-height: 150px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-left: 6px solid #0fb9b1;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         button { 
-            background: #3498db; 
+            background: #3c40c6; 
             color: white; 
             border: none; 
-            padding: 10px 15px; 
+            padding: 12px 15px; 
             cursor: pointer; 
-            border-radius: 5px; 
-            width: 100%;
+            border-radius: 6px; 
+            font-size: 1em;
             font-weight: bold;
             transition: 0.3s;
+            text-align: left;
+            display: flex;
+            align-items: center;
         }
-        button:hover { background: #2980b9; }
-        .desc { font-size: 0.95em; color: #555; line-height: 1.5; margin-bottom: 10px; }
-        .highlight { font-weight: bold; color: #d35400; }
+        button:hover { background: #575fcf; transform: scale(1.02); }
+        button i { margin-right: 10px; font-style: normal; }
+        
+        .btn-suara { background: #05c46b; text-align: center; justify-content: center;}
+        .btn-suara:hover { background: #10ac64; }
+        
+        .speaker-icon { font-size: 1.2em; margin-right: 8px; }
     </style>
 </head>
 <body>
@@ -73,73 +90,97 @@
         <iframe id="simFrame" src="traffic.html"></iframe>
     </div>
 
-    <div id="analysis-panel">
+    <div id="presentation-panel">
         <div class="header">
-            <h1>Dashboard Analisis Traffic</h1>
-            <p style="margin: 5px 0 0; font-size: 0.9em;">Live Output & Prediction</p>
+            <h1>🎙️ Live Analysis Dashboard</h1>
+            <p style="margin: 5px 0 0; font-size: 0.9em; color:#b2bec3;">Presentasi Interaktif Traffic Grid</p>
         </div>
 
-        <div class="card warning">
-            <h2>Skenario 1: Kepadatan Ekstrem (Gridlock)</h2>
-            <p class="desc"><strong>Variabel:</strong> Tingkatkan <code>num-cars</code> (Jumlah Mobil) mendekati nilai maksimum.</p>
-            <p class="desc"><strong>Analisis Output:</strong> Jika ini diubah, lalu lintas akan terkunci (Gridlock). Pada grafik, kurva <span class="highlight">Stopped Cars (Mobil Berhenti)</span> akan melonjak tajam ke atas, sedangkan kurva <span class="highlight">Average Speed</span> akan terjun bebas mendekati angka nol.</p>
-            <button onclick="tampilkanNotif('Skenario 1')">Pelajari Skenario 1</button>
+        <div id="presenter-box">
+            "Halo semuanya! Selamat datang di simulasi Traffic Grid. Di sebelah kiri layar, Anda bisa melihat simulasi lalu lintas. Silakan pilih skenario di bawah ini, dan saya akan menjelaskan apa yang terjadi pada simulasi dan grafiknya."
         </div>
 
-        <div class="card">
-            <h2>Skenario 2: Siklus Lampu Cepat vs Lambat</h2>
-            <p class="desc"><strong>Variabel:</strong> Ubah nilai <code>ticks-per-cycle</code> (Durasi Lampu Lalu Lintas).</p>
-            <p class="desc"><strong>Analisis Output:</strong> 
-                <br>- <strong>Jika Cepat:</strong> Terjadi fenomena "Stop-and-Go". Kurva kecepatan akan naik-turun berbentuk zig-zag rapat.
-                <br>- <strong>Jika Lambat:</strong> Antrean panjang terbentuk. Kurva Stopped Cars akan terlihat seperti anak tangga yang naik tinggi sebelum akhirnya turun kembali.
+        <button class="btn-suara" onclick="bacakanTeks()">
+            <span class="speaker-icon">🔊</span> Bacakan Penjelasan Saat Ini
+        </button>
+
+        <hr style="border-color: #636e72; margin: 20px 0;">
+        <h3 style="margin-top:0; color:#0fb9b1;">Pilih Skenario Presentasi:</h3>
+
+        <div class="controls">
+            <button onclick="ubahSkenario('intro')">
+                <i>👋</i> 1. Pembukaan & Pengenalan
             </button>
-            <button onclick="tampilkanNotif('Skenario 2')">Pelajari Skenario 2</button>
-        </div>
-
-        <div class="card success">
-            <h2>Skenario 3: Sinkronisasi & Gelombang Hijau</h2>
-            <p class="desc"><strong>Variabel:</strong> Aktifkan <code>power?</code> atau biarkan grid mengatur lalu lintas secara cerdas.</p>
-            <p class="desc"><strong>Analisis Output:</strong> Kendaraan akan bergerak bersamaan dalam ritme lampu hijau (Green Wave). Grafik <span class="highlight">Average Speed</span> akan stabil di atas, dan grafik antrean akan sangat rendah walau jumlah mobil banyak.</p>
-            <button onclick="tampilkanNotif('Skenario 3')">Pelajari Skenario 3</button>
-        </div>
-
-        <div class="card">
-            <h2>Pembacaan Grafik Saat Ini</h2>
-            <p class="desc">Berdasarkan pola pada grafik di `traffic.html`:</p>
-            <button onclick="analisisLive()" style="background-color: #2ecc71;">Generate Kesimpulan</button>
-            <p id="live-result" style="margin-top: 15px; font-weight: bold; color: #2c3e50; font-size: 0.9em;"></p>
+            <button onclick="ubahSkenario('macet')">
+                <i>🚗</i> 2. Analisis Kepadatan Ekstrem (Gridlock)
+            </button>
+            <button onclick="ubahSkenario('lampu')">
+                <i>🚦</i> 3. Analisis Durasi Lampu Merah
+            </button>
+            <button onclick="ubahSkenario('sinkronisasi')">
+                <i>🌊</i> 4. Efek Gelombang Hijau (Sinkronisasi)
+            </button>
+            <button onclick="ubahSkenario('kesimpulan')">
+                <i>📊</i> 5. Membaca Grafik Output (Kesimpulan)
+            </button>
         </div>
     </div>
 
     <script>
-        // Fungsi interaktif untuk memberikan arahan (bisa dikembangkan untuk memanipulasi iframe secara langsung)
-        function tampilkanNotif(skenario) {
-            if (skenario === 'Skenario 1') {
-                alert("CARA TES:\n1. Di panel simulasi, geser slider 'num-cars' menjadi lebih dari 150.\n2. Klik Setup, lalu Go.\n3. Perhatikan grafik Stopped Cars, ia akan mendominasi dan menyebabkan kemacetan total (gridlock).");
-            } else if (skenario === 'Skenario 2') {
-                alert("CARA TES:\n1. Geser 'ticks-per-cycle' ke angka rendah (misal: 10) lalu amati gerakannya.\n2. Geser ke angka tinggi (misal: 60) lalu amati panjangnya antrean di lampu merah.\n3. Grafik akan bereaksi membentuk zig-zag.");
-            } else if (skenario === 'Skenario 3') {
-                alert("CARA TES:\n1. Nyalakan switch Sinkronisasi (jika ada di traffic.html).\n2. Atur kepadatan di tingkat medium.\n3. Lihat bagaimana mobil jarang berhenti dan kecepatan rata-rata meningkat konstan di grafik.");
-            }
+        // Database teks gaya bahasa presentasi
+        const skenarioData = {
+            'intro': "Halo semuanya, selamat datang di analisis simulasi Traffic Grid. Coba perhatikan layar di sebelah kiri. Ini adalah simulasi jalan raya berbentuk grid. Di sini kita bisa melihat bagaimana mobil-mobil berinteraksi dengan lampu lalu lintas. Tujuan kita hari ini adalah melihat 'kalau variabelnya kita ubah, apa dampaknya terhadap kelancaran jalan?'",
+            
+            'macet': "Sekarang, mari kita coba skenario pertama. Bayangkan jam pulang kantor. Coba Bapak atau Ibu naikkan slider 'num-cars' mendekati angka maksimal. Apa yang terjadi? Betul, jalanan akan mengalami apa yang kita sebut 'Gridlock' atau macet total terkunci. Kalau kita lihat di grafiknya, garis 'Stopped Cars' atau mobil yang berhenti akan melesat tajam ke atas, sedangkan 'Average Speed' akan jatuh mendekati angka nol. Sistem lalu lintas lumpuh.",
+            
+            'lampu': "Selanjutnya, mari kita lihat peran lampu lalu lintas. Coba perhatikan parameter 'ticks-per-cycle'. Kalau kita buat siklusnya sangat cepat, mobil akan mengalami 'Stop-and-Go'—baru jalan sedikit, sudah merah lagi. Di grafik, ini terlihat seperti garis zig-zag yang sangat rapat. Sebaliknya, kalau siklusnya terlalu lambat, antrean di lampu merah akan sangat panjang sebelum akhirnya bisa jalan.",
+            
+            'sinkronisasi': "Nah, ini bagian yang paling menarik. Bagaimana kalau lampu lalu lintasnya kita buat pintar? Kalau kita aktifkan pengaturan sinkronisasi, lampu hijau akan menyala berurutan mengikuti laju mobil. Ini menciptakan efek 'Gelombang Hijau' atau Green Wave. Walaupun mobilnya banyak, perhatikan grafiknya: garis kecepatan rata-rata akan stabil di atas, dan jumlah mobil berhenti sangat minim. Arus jadi sangat mulus!",
+            
+            'kesimpulan': "Sebagai kesimpulan dari grafik yang ada di sebelah kiri: Grafik adalah indikator utama kita. Selama kurva kecepatan (Average Speed) stabil dan berada di atas kurva mobil berhenti (Stopped Cars), berarti rekayasa lalu lintas kita berhasil. Jika sebaliknya, berarti kita perlu mengatur ulang siklus lampu atau membatasi volume kendaraan. Terima kasih!"
+        };
+
+        // Fungsi untuk mengubah teks di kotak presenter
+        function ubahSkenario(skenario) {
+            const teksBaru = skenarioData[skenario];
+            const box = document.getElementById('presenter-box');
+            
+            // Efek transisi sederhana
+            box.style.opacity = 0;
+            setTimeout(() => {
+                box.innerText = '"' + teksBaru + '"';
+                box.style.opacity = 1;
+                
+                // Otomatis menghentikan suara sebelumnya jika ada skenario baru yang di-klik
+                window.speechSynthesis.cancel();
+            }, 300);
         }
 
-        // Fungsi kesimpulan dinamis (Simulasi AI Assistant)
-        function analisisLive() {
-            const kesimpulan = [
-                "Kesimpulan: Volume jalan masih di bawah ambang batas (Undersaturated). Grafik menunjukkan kelancaran tanpa antrean berarti.",
-                "Kesimpulan: Terjadi penumpukan di persimpangan! Grafik 'Stopped Cars' sedang tren naik. Rekomendasi: Perpanjang siklus lampu hijau (ticks-per-cycle).",
-                "Kesimpulan: Arus Tersinkronisasi dengan baik. Fluktuasi grafik kecepatan sangat stabil menandakan Green Wave berfungsi.",
-                "Kesimpulan: Kritis! Gridlock tercapai. Pergerakan 0%. Grafik Stopped Cars menyentuh batas maksimum populasi mobil."
-            ];
-            
-            // Mengambil kesimpulan random seolah-olah membaca grafik
-            const randomPick = kesimpulan[Math.floor(Math.random() * kesimpulan.length)];
-            const resultElement = document.getElementById('live-result');
-            
-            resultElement.innerText = "Menganalisis grafik...";
-            setTimeout(() => {
-                resultElement.innerText = randomPick;
-            }, 800);
+        // Fungsi Text-to-Speech (Membaca teks seperti orang presentasi)
+        function bacakanTeks() {
+            // Cek apakah browser mendukung Web Speech API
+            if ('speechSynthesis' in window) {
+                // Ambil teks dari kotak (hilangkan tanda kutip)
+                let teks = document.getElementById('presenter-box').innerText.replace(/"/g, '');
+                
+                // Buat objek ucapan
+                let ucapan = new SpeechSynthesisUtterance(teks);
+                
+                // Atur bahasa ke Bahasa Indonesia
+                ucapan.lang = 'id-ID';
+                
+                // Atur kecepatan dan nada bicara agar terdengar natural saat presentasi
+                ucapan.rate = 0.95; // Sedikit dilambatkan agar jelas
+                ucapan.pitch = 1.0;
+
+                // Batalkan suara yang sedang berjalan (jika tombol di-klik dua kali)
+                window.speechSynthesis.cancel();
+                
+                // Mulai bicara
+                window.speechSynthesis.speak(ucapan);
+            } else {
+                alert("Maaf, browser Anda tidak mendukung fitur suara (Text-to-Speech). Cobalah menggunakan Google Chrome atau Microsoft Edge terbaru.");
+            }
         }
     </script>
 </body>
