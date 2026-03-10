@@ -3,185 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentasi Analisis Traffic Grid</title>
+    <title>System Thinking · Analisis Lalu Lintas</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            height: 100vh; 
-            background-color: #1e272e;
-            color: #d2dae2;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        /* Bagian Kiri untuk iframe simulasi */
-        #simulation-container { 
-            flex: 6; 
-            border-right: 4px solid #3c40c6; 
-            background: #fff;
-        }
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-        }
-        /* Bagian Kanan untuk Panel Presentasi */
-        #presentation-panel { 
-            flex: 4; 
-            padding: 25px; 
-            overflow-y: auto; 
-            background: #2d3436;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #636e72;
-            padding-bottom: 15px;
-        }
-        h1 { margin: 0; font-size: 1.6em; color: #0fb9b1; }
-        
-        /* Kotak Teks Presenter */
-        #presenter-box {
-            background: #f1f2f6;
-            color: #2f3640;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 1.1em;
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f5f7fb;
+            color: #1e2b3c;
             line-height: 1.6;
-            margin-bottom: 20px;
-            min-height: 150px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border-left: 6px solid #0fb9b1;
-            font-style: italic;
+            padding: 30px 20px;
         }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .presentation-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 40px 40px 30px 30px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
         }
-
-        button { 
-            background: #3c40c6; 
-            color: white; 
-            border: none; 
-            padding: 12px 15px; 
-            cursor: pointer; 
-            border-radius: 6px; 
-            font-size: 1em;
-            font-weight: bold;
-            transition: 0.3s;
-            text-align: left;
+        /* header ala slide presentasi */
+        .slide-header {
+            background: linear-gradient(135deg, #0b2b4f, #123b6e);
+            color: white;
+            padding: 40px 50px 30px 50px;
+        }
+        .slide-header h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
+            gap: 20px;
         }
-        button:hover { background: #575fcf; transform: scale(1.02); }
-        button i { margin-right: 10px; font-style: normal; }
-        
-        .btn-suara { background: #05c46b; text-align: center; justify-content: center;}
-        .btn-suara:hover { background: #10ac64; }
-        
-        .speaker-icon { font-size: 1.2em; margin-right: 8px; }
+        .slide-header h1 i {
+            font-size: 3rem;
+            color: #ffd966;
+        }
+        .slide-header .sub {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            border-left: 5px solid #ffd966;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        .slide-body {
+            display: grid;
+            grid-template-columns: 1.1fr 1.9fr;
+            gap: 30px;
+            padding: 40px 50px;
+            background: #ffffff;
+        }
+        /* kolom narasi */
+        .narasi {
+            background: #f9fcff;
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: inset 0 0 0 1px rgba(0,60,130,0.08), 0 10px 20px -10px rgba(0,0,0,0.1);
+        }
+        .narasi h2 {
+            font-size: 1.9rem;
+            font-weight: 500;
+            color: #0a2a44;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .narasi h2 i {
+            color: #2b6c9e;
+        }
+        .narasi p {
+            font-size: 1.08rem;
+            margin-bottom: 20px;
+            color: #234;
+        }
+        .narasi .callout {
+            background: #e3f0ff;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 8px solid #1e6bc1;
+            font-style: italic;
+            box-shadow: 0 6px 12px rgba(0,70,150,0.08);
+        }
+        .narasi .callout i {
+            color: #1e6bc1;
+            margin-right: 8px;
+        }
+        .slider-group {
+            margin: 30px 0 20px;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: #0f3b5e;
+            margin-bottom: 6px;
+        }
+        input[type=range] {
+            width: 100%;
+            height: 8px;
+            background: #d0e0f0;
+            border-radius: 8px;
+            -webkit-appearance: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #1e6bc1;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,40,80,0.3);
+            border: 2px solid white;
+        }
+        .value-badge {
+            background: #1e6bc1;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        /* kolom grafik */
+        .grafik-area {
+            background: #f9fcff;
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: inset 0 0 0 1px rgba(0,60,130,0.08), 0 10px 20px -10px rgba(0,0,0,0.1);
+        }
+        .grafik-area h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #0a2a44;
+            margin-bottom: 20px;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,30,60,0.05);
+        }
+        .chart-card h4 {
+            font-size: 1.2rem;
+            color: #255c8c;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        canvas {
+            max-height: 200px;
+            width: 100% !important;
+        }
+        .stat-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .stat-item {
+            background: white;
+            border-radius: 18px;
+            padding: 16px 18px;
+            flex: 1 1 120px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,30,50,0.05);
+        }
+        .stat-item .label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #5f7d9c;
+            letter-spacing: 0.3px;
+        }
+        .stat-item .angka {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0b2b4f;
+            line-height: 1.2;
+        }
+        .footer-slide {
+            background: #e2ecf9;
+            padding: 25px 50px;
+            text-align: center;
+            color: #1e3a5f;
+            border-top: 2px solid white;
+            font-size: 1rem;
+        }
+        .footer-slide i {
+            color: #c44536;
+            margin: 0 4px;
+        }
     </style>
 </head>
 <body>
-
-    <div id="simulation-container">
-        <iframe id="simFrame" src="traffic.html"></iframe>
-    </div>
-
-    <div id="presentation-panel">
-        <div class="header">
-            <h1>🎙️ Live Analysis Dashboard</h1>
-            <p style="margin: 5px 0 0; font-size: 0.9em; color:#b2bec3;">Presentasi Interaktif Traffic Grid</p>
+    <div class="presentation-container">
+        <!-- slide 1 : header -->
+        <div class="slide-header">
+            <h1>
+                <i class="fas fa-project-diagram"></i> 
+                System Thinking · Lalu Lintas Urban
+            </h1>
+            <div class="sub">
+                “Kemacetan bukan hanya soal jumlah mobil — tapi soal hubungan, umpan balik, dan waktu tunda.”
+            </div>
         </div>
 
-        <div id="presenter-box">
-            "Halo semuanya! Selamat datang di simulasi Traffic Grid. Di sebelah kiri layar, Anda bisa melihat simulasi lalu lintas. Silakan pilih skenario di bawah ini, dan saya akan menjelaskan apa yang terjadi pada simulasi dan grafiknya."
+        <!-- slide 2 : konten utama -->
+        <div class="slide-body">
+            <!-- kolom kiri : narasi + kontrol -->
+            <div class="narasi">
+                <h2><i class="fas fa-comment-dots"></i> Cerita di Balik Simulasi</h2>
+                <p>
+                    Selamat datang di sesi <strong>system thinking</strong>. Mari kita bedah sistem lalu lintas 
+                    bukan sebagai kumpulan angka, tapi sebagai <em>jalinan hubungan sebab‑akibat</em>. 
+                    Coba perhatikan: ketika volume kendaraan naik, kepadatan ikut naik — akibatnya kecepatan turun. 
+                    Penurunan kecepatan membuat waktu tempuh lebih panjang, dan itu bisa memicu lebih banyak mobil 
+                    berada di jalan pada saat bersamaan. Inilah yang disebut <strong>umpan balik positif</strong>.
+                </p>
+                <div class="callout">
+                    <i class="fas fa-sync-alt fa-spin" style="--fa-animation-duration: 8s;"></i> 
+                    <strong>Loop keseimbangan?</strong> Di sisi lain, kemacetan ekstrem bisa membuat orang beralih 
+                    ke transportasi umum atau mengubah jam berangkat — <i>feedback negatif</i> yang menstabilkan sistem. 
+                    Tapi ada <strong>delay</strong>: efek perubahan lampu merah baru terasa beberapa menit kemudian.
+                </div>
+                <p>
+                    Coba mainkan tiga tuas utama di bawah ini. Setiap gerakan slider akan mengubah grafik di sebelah kanan 
+                    — Anda akan melihat langsung bagaimana struktur sistem merespons.
+                </p>
+
+                <!-- kontrol slider dengan gaya presentasi -->
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span><i class="fas fa-car"></i> Jumlah kendaraan (kendaraan/jam)</span>
+                        <span id="volValue" class="value-badge">180</span>
+                    </div>
+                    <input type="range" id="volSlider" min="50" max="350" value="180" step="5">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span><i class="fas fa-traffic-light"></i> Siklus lampu merah (detik)</span>
+                        <span id="lightValue" class="value-badge">40</span>
+                    </div>
+                    <input type="range" id="lightSlider" min="20" max="120" value="40" step="5">
+                </div>
+                <div class="slider-group">
+                    <div class="slider-label">
+                        <span><i class="fas fa-road"></i> Kapasitas jalan (kendaraan/km)</span>
+                        <span id="capValue" class="value-badge">55</span>
+                    </div>
+                    <input type="range" id="capSlider" min="30" max="100" value="55" step="2">
+                </div>
+
+                <!-- statistik ringkas -->
+                <div class="stat-row">
+                    <div class="stat-item">
+                        <div class="label">waktu tempuh (rata²)</div>
+                        <div class="angka" id="travelTime">14.3</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="label">kendaraan terhenti</div>
+                        <div class="angka" id="stoppedCount">28</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="label">indeks kemacetan</div>
+                        <div class="angka" id="congestIndex">6.2</div>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.95rem; color: #3f6280;">
+                    <i class="fas fa-clock"></i> Perubahan tidak instan — perhatikan bagaimana grafik “keterlambatan” 
+                    menggambarkan <strong>delay</strong> dalam sistem.
+                </p>
+            </div>
+
+            <!-- kolom kanan : grafik + analisis -->
+            <div class="grafik-area">
+                <h3><i class="fas fa-chart-network"></i> Visualisasi Hubungan Sistem</h3>
+                
+                <div class="chart-card">
+                    <h4><i class="fas fa-wave-square"></i> Volume vs. Kecepatan</h4>
+                    <canvas id="scatterChart"></canvas>
+                    <p style="font-size:0.9rem; margin-top:10px;">
+                        ⬆️ Semakin tinggi volume, kecepatan cenderung turun — tapi hubungannya tidak linier karena 
+                        <strong>ambang batas kapasitas</strong>.
+                    </p>
+                </div>
+
+                <div class="chart-card">
+                    <h4><i class="fas fa-clock"></i> Pengaruh siklus lampu terhadap tundaan</h4>
+                    <canvas id="delayChart"></canvas>
+                    <p style="font-size:0.9rem; margin-top:10px;">
+                        ⏱️ Ketika siklus lampu diperpanjang, tundaan membengkak, tetapi efeknya baru terasa setelah 
+                        beberapa siklus — <strong>delay</strong> adalah variabel penting dalam system thinking.
+                    </p>
+                </div>
+
+                <div style="background:#e0effa; border-radius: 16px; padding: 16px; margin-top: 12px;">
+                    <i class="fas fa-lightbulb" style="color:#e68a2e; margin-right:8px;"></i>
+                    <strong>Insight system thinking:</strong> Ketiga variabel saling terkait membentuk loop. 
+                    Coba naikkan “jumlah kendaraan” dan turunkan “kapasitas jalan” — amati bagaimana kemacetan 
+                    melonjak (positive feedback). Sebaliknya, ketika siklus lampu dikurangi, sistem butuh waktu 
+                    untuk “menenangkan diri” (delay dan negative feedback).
+                </div>
+            </div>
         </div>
 
-        <button class="btn-suara" onclick="bacakanTeks()">
-            <span class="speaker-icon">🔊</span> Bacakan Penjelasan Saat Ini
-        </button>
-
-        <hr style="border-color: #636e72; margin: 20px 0;">
-        <h3 style="margin-top:0; color:#0fb9b1;">Pilih Skenario Presentasi:</h3>
-
-        <div class="controls">
-            <button onclick="ubahSkenario('intro')">
-                <i>👋</i> 1. Pembukaan & Pengenalan
-            </button>
-            <button onclick="ubahSkenario('macet')">
-                <i>🚗</i> 2. Analisis Kepadatan Ekstrem (Gridlock)
-            </button>
-            <button onclick="ubahSkenario('lampu')">
-                <i>🚦</i> 3. Analisis Durasi Lampu Merah
-            </button>
-            <button onclick="ubahSkenario('sinkronisasi')">
-                <i>🌊</i> 4. Efek Gelombang Hijau (Sinkronisasi)
-            </button>
-            <button onclick="ubahSkenario('kesimpulan')">
-                <i>📊</i> 5. Membaca Grafik Output (Kesimpulan)
-            </button>
+        <!-- footer penutup -->
+        <div class="footer-slide">
+            <i class="fas fa-brain"></i> System thinking · lihat hubungan, bukan hanya kejadian · <i class="fas fa-arrows-alt-h"></i>
         </div>
     </div>
 
     <script>
-        // Database teks gaya bahasa presentasi
-        const skenarioData = {
-            'intro': "Halo semuanya, selamat datang di analisis simulasi Traffic Grid. Coba perhatikan layar di sebelah kiri. Ini adalah simulasi jalan raya berbentuk grid. Di sini kita bisa melihat bagaimana mobil-mobil berinteraksi dengan lampu lalu lintas. Tujuan kita hari ini adalah melihat 'kalau variabelnya kita ubah, apa dampaknya terhadap kelancaran jalan?'",
+        (function() {
+            // elemen slider
+            const volSlider = document.getElementById('volSlider');
+            const lightSlider = document.getElementById('lightSlider');
+            const capSlider = document.getElementById('capSlider');
             
-            'macet': "Sekarang, mari kita coba skenario pertama. Bayangkan jam pulang kantor. Coba Bapak atau Ibu naikkan slider 'num-cars' mendekati angka maksimal. Apa yang terjadi? Betul, jalanan akan mengalami apa yang kita sebut 'Gridlock' atau macet total terkunci. Kalau kita lihat di grafiknya, garis 'Stopped Cars' atau mobil yang berhenti akan melesat tajam ke atas, sedangkan 'Average Speed' akan jatuh mendekati angka nol. Sistem lalu lintas lumpuh.",
+            const volSpan = document.getElementById('volValue');
+            const lightSpan = document.getElementById('lightValue');
+            const capSpan = document.getElementById('capValue');
             
-            'lampu': "Selanjutnya, mari kita lihat peran lampu lalu lintas. Coba perhatikan parameter 'ticks-per-cycle'. Kalau kita buat siklusnya sangat cepat, mobil akan mengalami 'Stop-and-Go'—baru jalan sedikit, sudah merah lagi. Di grafik, ini terlihat seperti garis zig-zag yang sangat rapat. Sebaliknya, kalau siklusnya terlalu lambat, antrean di lampu merah akan sangat panjang sebelum akhirnya bisa jalan.",
-            
-            'sinkronisasi': "Nah, ini bagian yang paling menarik. Bagaimana kalau lampu lalu lintasnya kita buat pintar? Kalau kita aktifkan pengaturan sinkronisasi, lampu hijau akan menyala berurutan mengikuti laju mobil. Ini menciptakan efek 'Gelombang Hijau' atau Green Wave. Walaupun mobilnya banyak, perhatikan grafiknya: garis kecepatan rata-rata akan stabil di atas, dan jumlah mobil berhenti sangat minim. Arus jadi sangat mulus!",
-            
-            'kesimpulan': "Sebagai kesimpulan dari grafik yang ada di sebelah kiri: Grafik adalah indikator utama kita. Selama kurva kecepatan (Average Speed) stabil dan berada di atas kurva mobil berhenti (Stopped Cars), berarti rekayasa lalu lintas kita berhasil. Jika sebaliknya, berarti kita perlu mengatur ulang siklus lampu atau membatasi volume kendaraan. Terima kasih!"
-        };
+            const travelSpan = document.getElementById('travelTime');
+            const stoppedSpan = document.getElementById('stoppedCount');
+            const congestSpan = document.getElementById('congestIndex');
 
-        // Fungsi untuk mengubah teks di kotak presenter
-        function ubahSkenario(skenario) {
-            const teksBaru = skenarioData[skenario];
-            const box = document.getElementById('presenter-box');
-            
-            // Efek transisi sederhana
-            box.style.opacity = 0;
-            setTimeout(() => {
-                box.innerText = '"' + teksBaru + '"';
-                box.style.opacity = 1;
-                
-                // Otomatis menghentikan suara sebelumnya jika ada skenario baru yang di-klik
-                window.speechSynthesis.cancel();
-            }, 300);
-        }
+            // chart instances
+            let scatterChart, delayChart;
 
-        // Fungsi Text-to-Speech (Membaca teks seperti orang presentasi)
-        function bacakanTeks() {
-            // Cek apakah browser mendukung Web Speech API
-            if ('speechSynthesis' in window) {
-                // Ambil teks dari kotak (hilangkan tanda kutip)
-                let teks = document.getElementById('presenter-box').innerText.replace(/"/g, '');
-                
-                // Buat objek ucapan
-                let ucapan = new SpeechSynthesisUtterance(teks);
-                
-                // Atur bahasa ke Bahasa Indonesia
-                ucapan.lang = 'id-ID';
-                
-                // Atur kecepatan dan nada bicara agar terdengar natural saat presentasi
-                ucapan.rate = 0.95; // Sedikit dilambatkan agar jelas
-                ucapan.pitch = 1.0;
+            function initCharts() {
+                const ctx1 = document.getElementById('scatterChart').getContext('2d');
+                const ctx2 = document.getElementById('delayChart').getContext('2d');
 
-                // Batalkan suara yang sedang berjalan (jika tombol di-klik dua kali)
-                window.speechSynthesis.cancel();
-                
-                // Mulai bicara
-                window.speechSynthesis.speak(ucapan);
-            } else {
-                alert("Maaf, browser Anda tidak mendukung fitur suara (Text-to-Speech). Cobalah menggunakan Google Chrome atau Microsoft Edge terbaru.");
+                // scatter chart (volume vs kecepatan) – kita gunakan line chart dengan titik
+                scatterChart = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: generateVolumeLabels(),
+                        datasets: [{
+                            label: 'Kecepatan rata‑rata (km/j)',
+                            data: generateSpeedData(),
+                            borderColor: '#d97706',
+                            backgroundColor: 'rgba(217,119,6,0.1)',
+                            tension: 0.3,
+                            pointBackgroundColor: '#d97706',
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { label: (ctx) => `Volume ${ctx.label} → ${ctx.raw} km/j` } }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, max: 80, title: { display: true, text: 'km/jam' } },
+                            x: { title: { display: true, text: 'Volume (kend/jam)' } }
+                        }
+                    }
+                });
+
+                // delay chart (pengaruh siklus lampu terhadap tundaan)
+                delayChart = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: ['Siklus 1', 'Siklus 2', 'Siklus 3', 'Siklus 4', 'Siklus 5', 'Siklus 6'],
+                        datasets: [{
+                            label: 'Tundaan (detik)',
+                            data: generateDelayData(40), // nilai awal
+                            borderColor: '#1e6bc1',
+                            backgroundColor: 'rgba(30,107,193,0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: { callbacks: { label: (ctx) => `Tundaan ${ctx.raw} detik` } }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'detik' } }
+                        }
+                    }
+                });
             }
-        }
+
+            // helper untuk label volume (misal 50, 100, 150 ...)
+            function generateVolumeLabels() {
+                let labels = [];
+                for (let v = 50; v <= 350; v += 30) labels.push(v);
+                return labels;
+            }
+
+            // data kecepatan berdasarkan volume & kapasitas
+            function generateSpeedData() {
+                const cap = parseFloat(capSlider.value);
+                const volBase = parseFloat(volSlider.value);
+                // rumus sederhana: kecepatan = 70 - (volume / kapasitas)*30 + random noise, tapi agar halus kita buat kurva
+                let speeds = [];
+                for (let v = 50; v <= 350; v += 30) {
+                    // faktor kepadatan relatif terhadap kapasitas
+                    let densityFactor = Math.min(1, v / cap);
+                    // kecepatan dasar 75 km/jam saat kosong, turun sampai 20 km/jam saat padat
+                    let speed = 75 - 55 * densityFactor;
+                    // pengaruh lampu: siklus lebih panjang sedikit mengurangi kecepatan
+                    let light = parseFloat(lightSlider.value);
+                    speed -= (light - 40) * 0.15;
+                    speeds.push(Math.max(8, Math.round(speed * 10) / 10));
+                }
+                return speeds;
+            }
+
+            // data tundaan berdasarkan siklus lampu (menunjukkan delay)
+            function generateDelayData(lightVal) {
+                // tundaan dasar 15 + (light-20)*0.4 , lalu ditambah efek akumulasi (delay)
+                let base = 15 + (lightVal - 20) * 0.5;
+                return [
+                    Math.round(base),                                   // siklus 1
+                    Math.round(base + lightVal * 0.2),                 // siklus 2 (mulai terakumulasi)
+                    Math.round(base + lightVal * 0.35 + 2),
+                    Math.round(base + lightVal * 0.45 + 5),
+                    Math.round(base + lightVal * 0.5 + 7),
+                    Math.round(base + lightVal * 0.55 + 8)            // mendekati steady
+                ];
+            }
+
+            // update tampilan slider dan statistik
+            function updateAll() {
+                const vol = parseInt(volSlider.value);
+                const light = parseInt(lightSlider.value);
+                const cap = parseInt(capSlider.value);
+
+                volSpan.textContent = vol;
+                lightSpan.textContent = light;
+                capSpan.textContent = cap;
+
+                // hitung statistik berdasarkan formula sederhana (system thinking)
+                // waktu tempuh rata2 (dipengaruhi volume, lampu, kapasitas)
+                let travel = (25 + vol * 0.08 + light * 0.12 - cap * 0.15).toFixed(1);
+                travel = Math.max(5, Math.min(45, travel));
+                travelSpan.textContent = travel;
+
+                // kendaraan terhenti (dipengaruhi volume dan lampu, berkurang dengan kapasitas)
+                let stopped = Math.round(vol * 0.15 + light * 0.25 - cap * 0.3);
+                stopped = Math.max(0, stopped);
+                stoppedSpan.textContent = stopped;
+
+                // indeks kemacetan (0-10)
+                let congest = (vol / 40 + light / 30 - cap / 25).toFixed(1);
+                congest = Math.max(0, Math.min(10, congest));
+                congestSpan.textContent = congest;
+
+                // update grafik
+                scatterChart.data.datasets[0].data = generateSpeedData();
+                delayChart.data.datasets[0].data = generateDelayData(light);
+                scatterChart.update();
+                delayChart.update();
+            }
+
+            // event listeners
+            volSlider.addEventListener('input', updateAll);
+            lightSlider.addEventListener('input', updateAll);
+            capSlider.addEventListener('input', updateAll);
+
+            // inisialisasi
+            initCharts();
+            updateAll();
+
+            // responsive chart update
+            window.addEventListener('resize', () => {
+                scatterChart.update();
+                delayChart.update();
+            });
+        })();
     </script>
 </body>
 </html>
